@@ -39,6 +39,13 @@
     document.getElementById('toasts').append(t);
     setTimeout(() => t.remove(), 2600);
   }
+  const SPK = '<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15 8.5a4.5 4.5 0 010 7M17.5 6a8 8 0 010 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+  const spk = () => h('span', { html: SPK, class: 'svgi' });
+  const portrait = (kind, size) => (kind ? G.Art.el(kind, size) : h('span'));
+  function confetti(card) {
+    const cols = ['#ffd43b', '#ff6b6b', '#4dabf7', '#69db7c', '#f783ac', '#b197fc'];
+    for (let i = 0; i < 28; i++) card.append(h('i', { class: 'confetti', style: `--x:${Math.round(Math.random() * 500 - 250)}px;--y:${Math.round(-Math.random() * 260 - 60)}px;--r:${Math.round(Math.random() * 720)}deg;background:${cols[i % 6]};animation-delay:${Math.random() * 0.1}s` }));
+  }
   const btn = (label, fn, cls) => h('button', { class: 'btn ' + (cls || ''), onclick: fn }, label);
 
   /* ---------- visuals ---------- */
@@ -130,8 +137,8 @@
       const hintBox = h('div', { class: 'hintbox' });
       const finish = (r) => { if (done) return; done = true; close(); resolve(r); };
       card.append(h('div', { class: 'cardhead' },
-        h('span', { class: 'who' }, (who && who.emoji) || '🐞'), h('span', { class: 'whoname' }, (who && who.name) || ''),
-        btn('🔊', say, 'round'), btn('✖', () => finish({ solved: false, firstTry: false, skipped: true }), 'round')));
+        portrait((who && who.kind) || 'ladybug', 68), h('span', { class: 'whoname' }, (who && who.name) || ''),
+        btn(spk(), say, 'round'), btn('✕', () => finish({ solved: false, firstTry: false, skipped: true }), 'round')));
       card.append(h('h2', { class: 'prompt' + (p.word ? ' wordy' : '') }, p.text));
       const body = h('div', { class: 'askbody' });
       card.append(body, hintBox, feedback);
@@ -146,7 +153,7 @@
           G.streak = (G.streak || 0) + 1;
           G.Audio.sfx.correct(G.streak);
           feedback.textContent = ['Yes!', 'Great job!', 'You got it!', 'Wonderful!', 'Super!'][Math.floor(Math.random() * 5)];
-          feedback.className = 'feedback good';
+          feedback.className = 'feedback good'; confetti(card);
           setTimeout(() => finish({ solved: true, firstTry: tries === 0 }), 900);
           return;
         }
@@ -235,7 +242,7 @@
         showSolution = () => { feedback.textContent = `The right side needs ${p.target} more to match.`; };
         setKeys((e) => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
       }
-      checkBtn = btn(p.kind === 'number' ? 'Check' : 'Check ✔', check, 'big go');
+      checkBtn = btn('Check', check, 'big go');
       card.append(h('div', { class: 'cardfoot' }, checkBtn));
       say();
     });
@@ -250,11 +257,11 @@
       const count = h('div', { class: 'answer' }, '0'), area = h('div', { class: 'visual' }), feedback = h('div', { class: 'feedback' });
       const upd = () => { count.textContent = n; area.innerHTML = ''; area.append(frames(n)); };
       const add = (d) => { n = Math.max(0, Math.min(120, n + d)); upd(); G.Audio.sfx.tap(); };
-      card.append(h('div', { class: 'cardhead' }, h('span', { class: 'who' }, '🌱'), h('span', { class: 'whoname' }, ''),
-        btn('🔊', () => G.Audio.speak(text), 'round'), btn('✖', () => { close(); resolve(false); }, 'round')));
+      card.append(h('div', { class: 'cardhead' }, portrait('bee', 68), h('span', { class: 'whoname' }, 'Time to plant!'),
+        btn(spk(), () => G.Audio.speak(text), 'round'), btn('✕', () => { close(); resolve(false); }, 'round')));
       card.append(h('h2', { class: 'prompt wordy', style: `color:${bed.color.c}` }, text), area,
         h('div', { class: 'plantrow' }, bed.magic > 20 ? btn('−10', () => add(-10), 'key alt') : null, btn('−1', () => add(-1), 'key alt'), count, btn('+1', () => add(1), 'key'), bed.magic > 20 ? btn('+10', () => add(10), 'key') : null),
-        feedback, h('div', { class: 'cardfoot' }, btn('Grow! 🌻', () => {
+        feedback, h('div', { class: 'cardfoot' }, btn('Grow!', () => {
           if (n === bed.magic) { G.Audio.sfx.correct(3); close(); resolve(true); }
           else { G.Audio.sfx.wrong(); feedback.className = 'feedback bad'; feedback.textContent = n < bed.magic ? `That is ${n}. You need more seeds to make ${bed.magic}.` : `That is ${n}. That is too many for ${bed.magic}.`; }
         }, 'big go')));
@@ -263,7 +270,7 @@
   }
 
   /* ---------- pay exact change ---------- */
-  function pay(label, price) {
+  function pay(label, price, who) {
     return new Promise((resolve) => {
       const lvl = G.state.skills.money.level;
       const denoms = lvl <= 1 ? [1, 5] : lvl === 2 ? [1, 5, 10] : [1, 5, 10, 25];
@@ -278,8 +285,8 @@
         if (!coins.length) counter.append(h('span', { class: 'small' }, 'Tap coins to put them on the counter.'));
         total.textContent = reveal ? sum() + '¢' : '?';
       };
-      card.append(h('div', { class: 'cardhead' }, h('span', { class: 'who' }, '🛒'), h('span', { class: 'whoname' }, ''),
-        btn('🔊', () => G.Audio.speak(text), 'round'), btn('✖', () => { close(); resolve(false); }, 'round')));
+      card.append(h('div', { class: 'cardhead' }, portrait(who || 'squirrel', 68), h('span', { class: 'whoname' }, 'Pay with the right coins'),
+        btn(spk(), () => G.Audio.speak(text), 'round'), btn('✕', () => { close(); resolve(false); }, 'round')));
       card.append(h('h2', { class: 'prompt wordy' }, `${label}: ${price}¢`), counter, h('div', { class: 'plantrow' }, total),
         h('div', { class: 'tray' }, denoms.map((d) => coinEl(d, { onclick: () => { if (coins.length < 24) { coins.push(d); render(); G.Audio.sfx.tap(); } } }))),
         feedback, h('div', { class: 'cardfoot' }, btn('Pay', () => {
@@ -294,10 +301,10 @@
     });
   }
 
-  function choice(text, options, emoji) {
+  function choice(text, options, kind) {
     return new Promise((resolve) => {
       const card = open('choice');
-      card.append(h('div', { class: 'bigemoji' }, emoji || '🐝'), h('h2', { class: 'prompt wordy' }, text),
+      card.append(portrait(kind || 'bee', 110), h('h2', { class: 'prompt wordy' }, text),
         h('div', { class: 'cardfoot' }, options.map(([label, value], i) => btn(label, () => { close(); resolve(value); }, 'big ' + (i === 0 ? 'go' : 'alt')))));
       G.Audio.speak(text);
     });
@@ -308,7 +315,7 @@
       const show = () => {
         const card = open('story');
         const p = panels[i];
-        card.append(h('div', { class: 'bigemoji' }, p.emoji), h('p', { class: 'storytext' }, p.text),
+        card.append(G.Art.el(p.art, Math.min(420, window.innerWidth - 80), p.o), h('p', { class: 'storytext' }, p.text),
           h('div', { class: 'cardfoot' }, btn(i < panels.length - 1 ? 'Next ▶' : "Let's go!", () => { i++; if (i < panels.length) show(); else { close(); resolve(); } }, 'big go')));
         G.Audio.speak(p.text);
       };

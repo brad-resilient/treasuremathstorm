@@ -38,7 +38,7 @@ const shots = process.argv[2];
   }
   const interact = (type, i = 0) => page.evaluate(([type, i]) => { const e = G.World.ents().filter((x) => x.type === type)[i]; G.World.interact(e); }, [type, i]);
 
-  await page.click('#btn-play');
+  await page.waitForTimeout(600); await shot('title'); await page.click('#btn-play', { force: true });
   await page.fill('#modal input', 'Robin'); await click('OK');
   for (let i = 0; i < 4; i++) { await shot('story' + i); await page.locator('#modal .btn.big').click(); }
   await shot('home');

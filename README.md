@@ -37,6 +37,7 @@ Adding and subtracting starts at "within 20"; everything else starts at level 1.
 - `index.html`, `css/style.css` — page and styles
 - `js/problems.js` — problem generators for all six skills
 - `js/state.js` — saving and adaptive difficulty
+- `js/art.js` — characters, hats, items and story pictures, all drawn in code
 - `js/audio.js` — synthesized sounds, music and read-aloud (browser voice)
 - `js/ui.js` — question, planting, paying and story cards
 - `js/world.js` — the scrolling garden
@@ -44,4 +45,4 @@ Adding and subtracting starts at "within 20"; everything else starts at level 1.
 - `tests/` — `node tests/problems.test.js` checks the generators; `node tests/smoke.js` plays a full trip in a headless browser (needs Playwright)
 - `reports/`, `research_notes/` — background research
 
-All art is drawn in code or uses emoji; all sound is synthesized. No external assets.
+All art is drawn in code and all sound is synthesized, so there are no image or audio files. The prize-shelf stickers are emoji. The page loads the Fredoka font from Google Fonts and falls back to a system font when offline.

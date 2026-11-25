@@ -4,37 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Glowgarden: A Math Adventure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div id="screen-title" class="screen">
-  <div class="titlebox">
-    <div class="titleemoji">🌻</div>
-    <h1>Glowgarden</h1>
-    <p>A math adventure</p>
-    <button id="btn-play" class="btn big go">Play ▶</button>
-  </div>
-</div>
-<div id="screen-home" class="screen hidden"></div>
-<div id="screen-world" class="screen hidden">
+<div id="screen-world" class="screen">
   <div id="stage">
     <canvas id="game"></canvas>
-    <div id="hud">
-      <button id="hud-home" class="btn round" aria-label="Home">🏠</button>
+    <div id="hud" class="hidden">
+      <button id="hud-home" class="btn round" aria-label="Home"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 11.5L12 4l9 7.5M6 10v9h4.5v-5h3v5H18v-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <span id="hud-zone" class="chip"></span>
       <span id="hud-coins" class="chip"></span>
       <span id="hud-pieces" class="chip"></span>
       <span id="hud-gems" class="chip"></span>
       <span id="hud-magic" class="chip magic"></span>
-      <button id="hud-hint" class="btn round" aria-label="Hint">🐝</button>
+      <button id="hud-hint" class="btn round hintbtn" aria-label="Hint"></button>
     </div>
   </div>
 </div>
+<div id="screen-title" class="screen">
+  <div class="titlebox">
+    <h1 class="logo"><span>G</span><span>l</span><span>o</span><span>w</span><span>g</span><span>a</span><span>r</span><span>d</span><span>e</span><span>n</span></h1>
+    <p class="tag">A math adventure</p>
+    <button id="btn-play" class="btn big go">Play ▶</button>
+  </div>
+</div>
+<div id="screen-home" class="screen hidden"></div>
+<div id="fade"></div>
 <div id="modal" class="hidden"></div>
 <div id="toasts"></div>
 <script src="js/problems.js"></script>
 <script src="js/state.js"></script>
 <script src="js/audio.js"></script>
+<script src="js/art.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/world.js"></script>
 <script src="js/main.js"></script>
